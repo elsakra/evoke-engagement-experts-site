@@ -1,0 +1,99 @@
+---
+interface Props {
+  title?: string;
+  subtitle?: string;
+}
+
+const { title = "Inbox", subtitle = "Keyboard-first. AI-assisted. Fast." } = Astro.props;
+---
+
+<div class="relative">
+  <div class="absolute -inset-1 rounded-3xl bg-gradient-to-br from-primary-600/40 via-white/10 to-accent-400/30 blur"></div>
+  <div class="relative rounded-3xl border border-white/10 bg-white/[0.03] overflow-hidden">
+    <!-- Window chrome -->
+    <div class="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-white/[0.02]">
+      <div class="flex items-center gap-2">
+        <span class="h-2.5 w-2.5 rounded-full bg-white/20"></span>
+        <span class="h-2.5 w-2.5 rounded-full bg-white/20"></span>
+        <span class="h-2.5 w-2.5 rounded-full bg-white/20"></span>
+      </div>
+      <div class="text-xs uppercase tracking-[0.22em] text-white/55">{title}</div>
+      <div class="text-xs text-white/45">{subtitle}</div>
+    </div>
+
+    <!-- Content -->
+    <div class="p-6">
+      <div class="grid grid-cols-12 gap-4">
+        <!-- Left rail -->
+        <div class="col-span-4 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+          <div class="text-xs uppercase tracking-[0.22em] text-white/50">Split inbox</div>
+          <div class="mt-4 space-y-2">
+            {["VIP", "To reply", "Waiting", "Newsletters"].map((x, i) => (
+              <div class:list={[
+                "flex items-center justify-between rounded-xl px-3 py-2 border border-white/10",
+                i === 1 ? "bg-white/[0.04]" : "bg-white/[0.02]"
+              ]}>
+                <span class="text-sm text-white/80">{x}</span>
+                <span class="text-xs text-white/45">{i === 1 ? "12" : i === 0 ? "3" : "7"}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Main list -->
+        <div class="col-span-8 rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden">
+          <div class="px-5 py-4 border-b border-white/10">
+            <div class="flex items-center justify-between">
+              <div class="text-sm font-semibold text-white/85">To reply</div>
+              <div class="text-xs text-white/45">Cmd+K</div>
+            </div>
+          </div>
+          <div class="divide-y divide-white/10">
+            {[
+              { from: "Ava", subject: "Quick follow-up", preview: "Want me to send the next step?", hot: true },
+              { from: "Noah", subject: "Re: onboarding", preview: "Here’s the checklist + timeline.", hot: false },
+              { from: "Mia", subject: "Draft this reply with AI", preview: "Keep my tone, make it shorter.", hot: false },
+            ].map((m) => (
+              <div class="px-5 py-4 flex gap-4">
+                <div class:list={[
+                  "h-10 w-10 rounded-xl flex items-center justify-center text-sm font-semibold",
+                  m.hot ? "bg-primary-600/30 text-white" : "bg-white/[0.04] text-white/80"
+                ]}>
+                  {m.from.slice(0, 1)}
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center justify-between gap-3">
+                    <div class="truncate text-sm font-semibold text-white/85">{m.subject}</div>
+                    {m.hot ? (
+                      <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary-600/25 text-white/80 border border-primary-400/20">
+                        AI
+                      </span>
+                    ) : (
+                      <span class="text-xs text-white/40">Now</span>
+                    )}
+                  </div>
+                  <div class="mt-1 text-sm text-white/55 truncate">{m.preview}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Command palette -->
+    <div class="absolute left-1/2 -translate-x-1/2 bottom-6 w-[92%] max-w-md rounded-2xl border border-white/10 bg-[#070A12]/80 backdrop-blur px-4 py-3">
+      <div class="flex items-center gap-3">
+        <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.04] border border-white/10 text-white/70">
+          ⌘
+        </span>
+        <div class="min-w-0 flex-1">
+          <div class="text-sm text-white/80">Ask AI to draft a reply…</div>
+          <div class="text-xs text-white/45 truncate">“Friendly, concise, and confirm next steps.”</div>
+        </div>
+        <span class="text-xs text-white/45">Enter</span>
+      </div>
+    </div>
+  </div>
+</div>
+

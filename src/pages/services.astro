@@ -1,0 +1,109 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionHeader from '@/components/SectionHeader.astro';
+import Button from '@/components/Button.astro';
+import siteData from '@/data/site.json';
+import { getCollection } from 'astro:content';
+
+const services = await getCollection('services');
+const sortedServices = services.sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+const { sections } = siteData;
+---
+
+<BaseLayout title="Services">
+  <!-- Hero -->
+  <section class="pt-28 pb-14 bg-[#070A12] text-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl mx-auto text-center">
+        <p class="text-xs uppercase tracking-[0.22em] text-white/60">Product</p>
+        <h1 class="mt-4 font-display text-4xl sm:text-5xl font-bold tracking-tight">
+          {sections.services?.headline || "Features"}
+        </h1>
+        {sections.services?.description && (
+          <p class="mt-6 text-lg text-white/70 leading-relaxed">
+            {sections.services.description}
+          </p>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <!-- Services List -->
+  <section class="py-20 border-t border-white/10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="space-y-16">
+        {sortedServices.map(async (service, index) => {
+          const { Content } = await service.render();
+          const isEven = index % 2 === 0;
+          return (
+            <div class:list={[
+              "grid lg:grid-cols-2 gap-12 items-center",
+              !isEven && "lg:flex-row-reverse"
+            ]}>
+              {service.data.image && (
+                <div class:list={["relative", !isEven && "lg:order-2"]}>
+                  <div class="aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-white/[0.03]">
+                    <img 
+                      src={service.data.image} 
+                      alt={service.data.title}
+                      class="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+              )}
+              <div class:list={[!isEven && "lg:order-1"]}>
+                <h2 class="font-display text-3xl font-bold text-white">
+                  {service.data.title}
+                </h2>
+                <div class="mt-4 prose prose-invert max-w-none">
+                  <Content />
+                </div>
+                
+                {service.data.features && service.data.features.length > 0 && (
+                  <ul class="mt-6 space-y-2">
+                    {service.data.features.map((feature) => (
+                      <li class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-white/80 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="text-white/70">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                
+                <div class="mt-8">
+                  <Button href="/pricing" style="white">
+                    Get Superflow
+                  </Button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-20 border-t border-white/10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="rounded-3xl border border-white/10 bg-white/[0.03] p-10 sm:p-14 text-center">
+        <h2 class="font-display text-3xl sm:text-4xl font-bold text-white">
+          Ready to go faster?
+        </h2>
+        <p class="mt-4 text-lg text-white/70">
+          Try Superflow today, or talk to sales for teams.
+        </p>
+        <div class="mt-10 flex flex-wrap justify-center gap-3">
+          <Button href="/pricing" style="white" size="lg">
+            Get Superflow
+          </Button>
+          <Button href="/contact" style="outline" size="lg" class="border-white/20 text-white hover:bg-white/10">
+            Contact sales
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

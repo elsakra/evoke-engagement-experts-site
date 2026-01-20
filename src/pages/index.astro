@@ -1,0 +1,338 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Button from '@/components/Button.astro';
+import SectionHeader from '@/components/SectionHeader.astro';
+import HeroVisual from '@/components/HeroVisual.astro';
+import LogoBar from '@/components/LogoBar.astro';
+import EditorialSection from '@/components/EditorialSection.astro';
+import siteData from '@/data/site.json';
+import { getCollection } from 'astro:content';
+
+const services = await getCollection('services');
+const testimonials = await getCollection('testimonials');
+const plans = await getCollection('pricing-plans');
+
+const { hero, sections, company } = siteData;
+const sortedServices = services.sort((a, b) => (a.data.order || 0) - (b.data.order || 0)).slice(0, 6);
+const featuredTestimonials = testimonials.filter(t => t.data.featured).slice(0, 3);
+const sortedPlans = plans.sort((a, b) => (a.data.order || 0) - (b.data.order || 0)).slice(0, 3);
+
+const suiteTabs = sortedServices.slice(0, 4).map((s) => ({
+  slug: s.slug,
+  title: s.data.title,
+  description: s.data.shortDescription,
+  bullets: (s.data.features || []).slice(0, 4),
+}));
+---
+
+<BaseLayout>
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden">
+    <div class="absolute inset-0">
+      <div class="absolute inset-0 bg-gradient-to-b from-[#070A12] via-[#070A12] to-[#05060b]"></div>
+      <div class="absolute -top-56 left-1/2 -translate-x-1/2 h-[680px] w-[680px] rounded-full bg-primary-600/22 blur-3xl"></div>
+      <div class="absolute -bottom-64 right-0 h-[720px] w-[720px] rounded-full bg-accent-400/18 blur-3xl"></div>
+      <div class="absolute inset-0 opacity-[0.06]" style="background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.55) 1px, transparent 0); background-size: 22px 22px;"></div>
+    </div>
+    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12 sm:pt-24 sm:pb-16">
+      <div class="grid lg:grid-cols-12 gap-10 items-start">
+        <div class="lg:col-span-6">
+          {hero.trustBadges && (
+            <div class="flex flex-wrap gap-2 mb-7">
+              {hero.trustBadges.map((b) => (
+                <span class="inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-white/75">
+                  {b}
+                </span>
+              ))}
+            </div>
+          )}
+
+          <h1 class="font-display text-5xl sm:text-6xl lg:text-[64px] leading-[1.02] font-bold tracking-tight">
+            {hero.headline}
+          </h1>
+
+          {hero.subheadline && (
+            <h2 class="mt-5 text-xl sm:text-2xl text-white/75 leading-relaxed max-w-xl">
+              {hero.subheadline}
+            </h2>
+          )}
+
+          <div class="mt-9 flex flex-wrap items-center gap-4">
+            <Button href={hero.cta.href} style="white" size="lg">
+              {hero.cta.label}
+            </Button>
+            {hero.secondaryCta && (
+              <a href={hero.secondaryCta.href} class="text-sm font-semibold text-white/75 hover:text-white transition-colors">
+                {hero.secondaryCta.label} →
+              </a>
+            )}
+          </div>
+
+          <div class="mt-10 flex flex-wrap gap-6 text-sm text-white/55">
+            {(siteData.sections?.stats?.stats || siteData.socialProof?.stats || []).slice(0, 3).map((s) => (
+              <div class="flex items-baseline gap-2">
+                <span class="text-white/85 font-semibold">{s.value}</span>
+                <span>{s.label}</span>
+              </div>
+            ))}
+          </div>
+
+        </div>
+
+        <div class="lg:col-span-6 lg:pt-4">
+          <HeroVisual />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Logo Bar - Like Superhuman's company logos -->
+  <LogoBar 
+    headline="Trusted by teams at"
+    companies={siteData.trustedCompanies || [
+      { name: "OpenAI" },
+      { name: "Figma" },
+      { name: "HubSpot" },
+      { name: "Expensify" },
+      { name: "Notion" },
+      { name: "Stripe" }
+    ]}
+  />
+
+  <!-- "Suite" (segmented) section -->
+  {suiteTabs.length > 0 && (
+    <section class="py-20 border-t border-white/10">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-end justify-between gap-6 flex-wrap">
+          <div class="max-w-3xl">
+            <p class="text-xs uppercase tracking-[0.22em] text-white/60">Your suite</p>
+            <h2 class="mt-4 font-display text-4xl sm:text-5xl font-bold tracking-tight text-white">
+              Move faster with the right modules
+            </h2>
+          </div>
+          <div class="flex items-center gap-3">
+            <Button href="/services" style="outline" class="border-white/20 text-white hover:bg-white/10">
+              Explore features
+            </Button>
+            <Button href="/pricing" style="white">
+              Get Superflow
+            </Button>
+          </div>
+        </div>
+
+        <div class="mt-10 flex flex-wrap gap-2" data-suite-tabs>
+          {suiteTabs.map((t, idx) => (
+            <button
+              type="button"
+              data-tab={t.slug}
+              class:list={[
+                "px-4 py-2 rounded-full border text-sm font-semibold transition-colors",
+                idx === 0 ? "border-white/20 bg-white text-[#070A12]" : "border-white/10 bg-white/[0.03] text-white/75 hover:bg-white/[0.06]"
+              ]}
+            >
+              {t.title}
+            </button>
+          ))}
+        </div>
+
+        <div class="mt-8">
+          {suiteTabs.map((t, idx) => (
+            <div data-panel={t.slug} class:list={[idx !== 0 && "hidden"]}>
+              <div class="grid lg:grid-cols-12 gap-6 items-stretch">
+                <div class="lg:col-span-5 rounded-3xl border border-white/10 bg-white/[0.03] p-8">
+                  <div class="text-xs uppercase tracking-[0.22em] text-white/55">Module</div>
+                  <h3 class="mt-3 font-display text-3xl font-bold text-white">{t.title}</h3>
+                  {t.description && <p class="mt-4 text-white/70 text-lg leading-relaxed">{t.description}</p>}
+                  <div class="mt-8 flex gap-3">
+                    <Button href={`/services/${t.slug}`} style="white">
+                      Learn more
+                    </Button>
+                    <Button href="/pricing" style="outline" class="border-white/20 text-white hover:bg-white/10">
+                      View pricing
+                    </Button>
+                  </div>
+                </div>
+                <div class="lg:col-span-7 rounded-3xl border border-white/10 bg-white/[0.03] p-8">
+                  <div class="text-xs uppercase tracking-[0.22em] text-white/55">Highlights</div>
+                  <ul class="mt-5 grid sm:grid-cols-2 gap-4">
+                    {(t.bullets || []).map((b) => (
+                      <li class="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+                        <div class="flex items-start gap-3">
+                          <span class="mt-0.5 inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white/[0.04] border border-white/10 text-white/80">✓</span>
+                          <div class="text-white/75 leading-relaxed">{b}</div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Feature grid -->
+  {sortedServices.length > 0 && (
+    <section class="py-20">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionHeader headline={sections.services?.headline || 'Features'} description={sections.services?.description} />
+        <div class="mt-12 grid md:grid-cols-12 gap-6">
+          {sortedServices.map((feature, idx) => (
+            <a
+              href={`/services/${feature.slug}`}
+              class:list={[
+                "group rounded-3xl border border-white/10 bg-white/[0.03] p-7 hover:bg-white/[0.05] transition-colors",
+                idx === 0 ? "md:col-span-7" : idx === 1 ? "md:col-span-5" : "md:col-span-4"
+              ]}
+            >
+              <div class="flex items-center justify-between gap-4">
+                <div class="text-xs uppercase tracking-[0.22em] text-white/50">Feature</div>
+                <div class="text-sm font-semibold text-white/70 group-hover:text-white">Learn →</div>
+              </div>
+              <h3 class="mt-4 font-display text-2xl sm:text-3xl font-bold text-white">{feature.data.title}</h3>
+              {feature.data.shortDescription && (
+                <p class="mt-3 text-white/65 leading-relaxed text-lg">{feature.data.shortDescription}</p>
+              )}
+              {feature.data.features?.length ? (
+                <ul class="mt-6 space-y-2 text-white/60">
+                  {feature.data.features.slice(0, 3).map((b) => (
+                    <li class="flex items-start gap-3">
+                      <span class="mt-2 h-1.5 w-1.5 rounded-full bg-white/30"></span>
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Feature spotlight (from site.json) -->
+  {siteData.sections?.features && (
+    <section class="py-20 border-t border-white/10">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionHeader headline={siteData.sections.features.headline} description={siteData.sections.features.description} />
+        <div class="mt-12 grid md:grid-cols-3 gap-6">
+          {siteData.sections.features.features.map((f) => (
+            <div class="rounded-2xl border border-white/10 bg-white/[0.03] p-7">
+              <h3 class="font-display text-xl font-bold">{f.title}</h3>
+              <p class="mt-2 text-white/65 leading-relaxed">{f.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Pricing preview -->
+  {sortedPlans.length > 0 && (
+    <section class="py-20 border-t border-white/10">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionHeader headline="Pricing" description="Pick a plan and go faster in minutes." />
+        <div class="mt-12 grid lg:grid-cols-3 gap-6">
+          {sortedPlans.map((plan) => (
+            <div class:list={[
+              'rounded-2xl border p-8',
+              plan.data.highlighted ? 'border-white/20 bg-white/5' : 'border-white/10 bg-white/[0.03]',
+            ]}>
+              <div class="flex items-center justify-between gap-4">
+                <h3 class="font-display text-2xl font-bold">{plan.data.name}</h3>
+                {plan.data.highlighted && <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-white/10 text-white/80">Popular</span>}
+              </div>
+              <p class="mt-3 text-white/70">{plan.data.description}</p>
+              <div class="mt-7 text-3xl font-bold">{plan.data.price}</div>
+              <div class="mt-6">
+                <Button href="/pricing" style={plan.data.highlighted ? 'white' : 'outline'} class={plan.data.highlighted ? 'w-full' : 'w-full border-white/20 text-white hover:bg-white/10'}>
+                  View pricing
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Testimonials -->
+  {featuredTestimonials.length > 0 && (
+    <section class="py-20 border-t border-white/10">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionHeader headline={sections.testimonials?.headline || 'Loved by teams'} description={sections.testimonials?.description} />
+        <div class="mt-12 grid md:grid-cols-3 gap-6">
+          {featuredTestimonials.map((t) => (
+            <div class="rounded-2xl border border-white/10 bg-white/[0.03] p-7">
+              <div class="text-white/80">“{t.data.quote}”</div>
+              <div class="mt-6 text-sm text-white/60">
+                <span class="font-semibold text-white/80">{t.data.author}</span>
+                {t.data.company ? <span> • {t.data.company}</span> : null}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Editorial / Manifesto Section - Like Superhuman's "Becoming Superhuman" -->
+  <EditorialSection 
+    headline={siteData.sections?.editorial?.headline || "Why We Built This"}
+    content={siteData.sections?.editorial?.content || [
+      "Modern teams move fast. But legacy tools slow them down with cluttered interfaces, endless notifications, and features built for a different era.",
+      "We believe software should amplify human capability, not diminish it. It should anticipate your needs, accelerate your work, and disappear into the background when you need to focus.",
+      "Every feature we build starts with a simple question: will this help our users do their best work?",
+      "This is why we exist."
+    ]}
+    ctaLabel={siteData.sections?.editorial?.ctaLabel || "Learn about our mission"}
+    ctaHref={siteData.sections?.editorial?.ctaHref || "/about"}
+  />
+
+  <!-- CTA -->
+  <section class="py-20 border-t border-white/10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="rounded-3xl border border-white/10 bg-white/[0.03] p-10 sm:p-14">
+        <div class="max-w-3xl">
+          <h2 class="font-display text-3xl sm:text-4xl font-bold">{siteData.sections?.cta?.headline || 'Ready to go faster?'}</h2>
+          <p class="mt-4 text-lg text-white/70">{siteData.sections?.cta?.description || 'Try it today or talk to sales.'}</p>
+          <div class="mt-10 flex flex-wrap gap-3">
+            <Button href={siteData.sections?.cta?.cta?.href || '/pricing'} style="white" size="lg">
+              {siteData.sections?.cta?.cta?.label || 'Get started'}
+            </Button>
+            <Button href={siteData.sections?.cta?.secondaryCta?.href || '/contact'} style="outline" size="lg" class="border-white/20 text-white hover:bg-white/10">
+              {siteData.sections?.cta?.secondaryCta?.label || 'Contact sales'}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const root = document.querySelector('[data-suite-tabs]');
+  if (root) {
+    const buttons = Array.from(root.querySelectorAll('button[data-tab]'));
+    const panels = Array.from(document.querySelectorAll('[data-panel]'));
+    const setActive = (slug) => {
+      for (const b of buttons) {
+        const isActive = b.getAttribute('data-tab') === slug;
+        b.classList.toggle('bg-white', isActive);
+        b.classList.toggle('text-[#070A12]', isActive);
+        b.classList.toggle('border-white/20', isActive);
+
+        b.classList.toggle('bg-white/[0.03]', !isActive);
+        b.classList.toggle('text-white/75', !isActive);
+        b.classList.toggle('border-white/10', !isActive);
+      }
+      for (const p of panels) {
+        const isActive = p.getAttribute('data-panel') === slug;
+        p.classList.toggle('hidden', !isActive);
+      }
+    };
+    buttons.forEach((b) => b.addEventListener('click', () => setActive(b.getAttribute('data-tab'))));
+  }
+</script>

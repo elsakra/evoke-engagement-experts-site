@@ -1,0 +1,93 @@
+---
+import siteData from '@/data/site.json';
+const { navigation, company, branding } = siteData;
+const currentPath = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-50 border-b border-white/10 bg-[#070A12]/80 backdrop-blur">
+  <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="h-16 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3">
+        <img src={branding.logo} alt={company.name} class="h-8 w-auto" />
+        <span class="sr-only">{company.name}</span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-8">
+        {navigation.items.map((item) => (
+          <a
+            href={item.href}
+            class:list={[
+              'text-sm font-medium transition-colors',
+              currentPath === item.href ? 'text-white' : 'text-white/70 hover:text-white',
+            ]}
+          >
+            {item.label}
+          </a>
+        ))}
+      </div>
+
+      <div class="hidden md:flex items-center gap-3">
+        <a href="/contact" class="text-sm font-semibold text-white/70 hover:text-white transition-colors">
+          Log in
+        </a>
+        {navigation.ctaButton && (
+          <a
+            href={navigation.ctaButton.href}
+            class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-white text-[#070A12] text-sm font-semibold hover:bg-white/90 transition-colors"
+          >
+            {navigation.ctaButton.label}
+          </a>
+        )}
+      </div>
+
+      <button
+        type="button"
+        class="md:hidden p-2 text-white/80 hover:text-white"
+        aria-label="Open menu"
+        id="mobile-menu-button"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="md:hidden hidden" id="mobile-menu">
+      <div class="pb-6 pt-2 space-y-1 border-t border-white/10">
+        {navigation.items.map((item) => (
+          <a
+            href={item.href}
+            class:list={[
+              'block py-2 text-base font-medium transition-colors',
+              currentPath === item.href ? 'text-white' : 'text-white/70 hover:text-white',
+            ]}
+          >
+            {item.label}
+          </a>
+        ))}
+        <div class="pt-3 space-y-2">
+          <a href="/contact" class="block text-white/70 hover:text-white font-semibold">
+            Log in
+          </a>
+          {navigation.ctaButton && (
+            <a
+              href={navigation.ctaButton.href}
+              class="block w-full text-center px-4 py-3 rounded-lg bg-white text-[#070A12] font-semibold hover:bg-white/90 transition-colors"
+            >
+              {navigation.ctaButton.label}
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<script>
+  const menuButton = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  
+  menuButton?.addEventListener('click', () => {
+    mobileMenu?.classList.toggle('hidden');
+  });
+</script>

@@ -1,0 +1,159 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Button from '@/components/Button.astro';
+import SectionHeader from '@/components/SectionHeader.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const services = await getCollection('services');
+  return services.map((service) => ({
+    params: { slug: service.slug },
+    props: { service },
+  }));
+}
+
+const { service } = Astro.props;
+const { Content } = await service.render();
+
+// Get other services for related section
+const allServices = await getCollection('services');
+const otherServices = allServices
+  .filter(s => s.slug !== service.slug)
+  .sort((a, b) => (a.data.order || 0) - (b.data.order || 0))
+  .slice(0, 3);
+---
+
+<BaseLayout title={service.data.title} description={service.data.shortDescription}>
+  <!-- Hero -->
+  <section class="pt-28 pb-14 bg-[#070A12] text-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center gap-2 text-sm text-white/55 mb-6">
+        <a href="/services" class="hover:text-white transition-colors">Product</a>
+        <span class="text-white/30">/</span>
+        <span class="text-white">{service.data.title}</span>
+      </div>
+      
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <h1 class="font-display text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">
+            {service.data.title}
+          </h1>
+          {service.data.shortDescription && (
+            <p class="mt-6 text-lg text-white/70 leading-relaxed">
+              {service.data.shortDescription}
+            </p>
+          )}
+          
+          <div class="mt-8 flex flex-wrap gap-4">
+            <Button href="/pricing" style="white" size="lg">
+              Get Superflow
+            </Button>
+            <Button href="/contact" style="outline" size="lg" class="border-white/20 text-white hover:bg-white/10">
+              Contact sales
+            </Button>
+          </div>
+        </div>
+        
+        {service.data.image && (
+          <div class="relative hidden lg:block">
+            <div class="aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-white/[0.03]">
+              <img 
+                src={service.data.image} 
+                alt={service.data.title}
+                class="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  {service.data.features && service.data.features.length > 0 && (
+    <section class="py-16 border-t border-white/10">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="font-display text-2xl font-bold text-white mb-8">
+          Included
+        </h2>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {service.data.features.map((feature) => (
+            <div class="flex items-start gap-4 border border-white/10 bg-white/[0.03] rounded-xl p-6">
+              <div class="w-10 h-10 rounded-lg border border-white/10 bg-white/[0.03] flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-white/80" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <p class="text-white/75 font-medium">{feature}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Main Content -->
+  <section class="py-16 border-t border-white/10">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="prose prose-invert prose-lg max-w-none prose-headings:font-display">
+        <Content />
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Services -->
+  {otherServices.length > 0 && (
+    <section class="py-16 border-t border-white/10">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionHeader 
+          headline="More features" 
+          description="Explore the full product."
+        />
+        
+        <div class="mt-12 grid md:grid-cols-3 gap-6">
+          {otherServices.map((related) => (
+            <a href={`/services/${related.slug}`} class="group block rounded-2xl border border-white/10 bg-white/[0.03] p-7 hover:bg-white/[0.05] transition-colors">
+              {related.data.image && (
+                <div class="aspect-[16/9] overflow-hidden rounded-xl border border-white/10 bg-white/[0.03]">
+                  <img 
+                    src={related.data.image} 
+                    alt={related.data.title}
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+              )}
+              <h3 class="mt-4 font-display text-lg font-bold text-white">{related.data.title}</h3>
+              {related.data.shortDescription && (
+                <p class="mt-2 text-white/65 text-sm line-clamp-2">
+                  {related.data.shortDescription}
+                </p>
+              )}
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- CTA -->
+  <section class="py-20 border-t border-white/10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="rounded-3xl border border-white/10 bg-white/[0.03] p-10 sm:p-14 text-center">
+        <h2 class="font-display text-3xl sm:text-4xl font-bold text-white">
+          Ready to go faster?
+        </h2>
+        <p class="mt-4 text-lg text-white/70">
+          Try Superflow today or talk to sales for teams.
+        </p>
+        <div class="mt-10 flex flex-wrap justify-center gap-3">
+          <Button href="/pricing" style="white" size="lg">
+            Get Superflow
+          </Button>
+          <Button href="/contact" style="outline" size="lg" class="border-white/20 text-white hover:bg-white/10">
+            Contact sales
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

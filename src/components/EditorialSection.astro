@@ -1,0 +1,77 @@
+---
+interface Props {
+  headline?: string;
+  content?: string[];
+  ctaLabel?: string;
+  ctaHref?: string;
+}
+
+const {
+  headline = "Becoming Superhuman",
+  content = [
+    "Email is the lifeblood of modern work. It's how deals get done, teams coordinate, and relationships are built.",
+    "Yet most email clients were built for a different era. They're slow, cluttered, and designed around the wrong priorities.",
+    "We believe you deserve better. Software that respects your time. That helps you focus on what matters. That makes you feel like a superhero, not a slave to your inbox.",
+    "This is why we built Superhuman."
+  ],
+  ctaLabel = "Join us",
+  ctaHref = "/about"
+} = Astro.props;
+---
+
+<section class="relative py-32 overflow-hidden">
+  <!-- Dark immersive background -->
+  <div class="absolute inset-0 bg-[#020205]"></div>
+  
+  <!-- Subtle gradient accents -->
+  <div class="absolute top-0 left-1/4 w-96 h-96 bg-primary-600/10 rounded-full blur-3xl"></div>
+  <div class="absolute bottom-0 right-1/4 w-80 h-80 bg-accent-400/10 rounded-full blur-3xl"></div>
+  
+  <!-- Dot pattern -->
+  <div class="absolute inset-0 opacity-[0.03]" style="background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.6) 1px, transparent 0); background-size: 32px 32px;"></div>
+
+  <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Decorative quote marks -->
+    <div class="absolute -top-8 left-0 text-white/5 font-display text-[200px] leading-none select-none pointer-events-none">
+      "
+    </div>
+
+    <div class="relative">
+      <h2 class="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight mb-12">
+        {headline}
+      </h2>
+
+      <div class="space-y-6">
+        {content.map((paragraph, index) => (
+          <p 
+            class="text-xl sm:text-2xl text-white/70 leading-relaxed"
+            style={`animation-delay: ${index * 0.1}s`}
+          >
+            {paragraph}
+          </p>
+        ))}
+      </div>
+
+      {ctaLabel && ctaHref && (
+        <div class="mt-12">
+          <a 
+            href={ctaHref}
+            class="inline-flex items-center gap-2 text-white font-semibold hover:text-primary-400 transition-colors group"
+          >
+            {ctaLabel}
+            <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </a>
+        </div>
+      )}
+    </div>
+
+    <!-- Decorative line -->
+    <div class="mt-20 flex items-center gap-6">
+      <div class="flex-1 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+      <div class="w-2 h-2 rounded-full bg-white/20"></div>
+      <div class="flex-1 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+    </div>
+  </div>
+</section>

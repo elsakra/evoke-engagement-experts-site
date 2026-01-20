@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 44" fill="none">
+  <defs>
+    <linearGradient id="sf-grad" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7C3AED"/>
+      <stop offset="1" stop-color="#22D3EE"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="4" width="36" height="36" rx="10" fill="url(#sf-grad)"/>
+  <path d="M23.5 10.5 16 24.5h7l-2.5 9 9-15h-7l1-8z" fill="#070A12"/>
+  <text x="52" y="28" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" font-weight="700" fill="#FFFFFF">Superflow</text>
+</svg>

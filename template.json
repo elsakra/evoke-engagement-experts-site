@@ -1,0 +1,30 @@
+{
+  "id": "saas-superhuman",
+  "name": "Superhuman-inspired SaaS",
+  "industry": "saas",
+  "tags": ["saas", "software", "productivity", "email", "ai", "high-velocity", "startup", "enterprise", "pricing-plans"],
+  "description": "High-contrast, Superhuman-inspired single-product SaaS template with strong typography, modular feature storytelling, pricing, and conversion-first CTAs.",
+  "status": "approved",
+  "heroMedia": "either",
+  "pages": [
+    "home",
+    "services",
+    "pricing",
+    "blog",
+    "contact",
+    "faq",
+    "privacy",
+    "terms"
+  ],
+  "contentCollections": [
+    "services",
+    "blog",
+    "testimonials",
+    "faq",
+    "pricing-plans"
+  ],
+  "previewUrl": null,
+  "sourceInspiration": "https://superhuman.com/",
+  "createdAt": "2026-01-19",
+  "updatedAt": "2026-01-19"
+}
